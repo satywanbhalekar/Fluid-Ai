@@ -1,0 +1,39 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# dotenv environment variables
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+
+# production build
+/build
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# locally installed tools/build
+/.eslintcache
+
+# editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# coverage reports
+/coverage
+
+# Windows system files
+Thumbs.db
+ehthumbs.db

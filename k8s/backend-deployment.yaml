@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: talent-api
+  namespace: talent-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: talent-api
+  template:
+    metadata:
+      labels:
+        app: talent-api
+    spec:
+      containers:
+        - name: talent-api
+          image: IMAGE_BACKEND
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: PORT
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DATABASE_URL
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
