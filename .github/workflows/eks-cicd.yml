@@ -81,18 +81,15 @@ jobs:
         run: |
           kubectl apply -f k8s/namespace.yaml
 
-      - name: Recreate postgres with corrected storage class
+      - name: Deploy Postgres
         run: |
-          kubectl delete statefulset postgres -n $K8S_NAMESPACE --ignore-not-found=true
-          kubectl delete pvc postgres-data-postgres-0 -n $K8S_NAMESPACE --ignore-not-found=true
           kubectl apply -f k8s/postgres-secret.yaml
+          kubectl apply -f k8s/postgres-deployment.yaml
           kubectl apply -f k8s/postgres-service.yaml
-          kubectl apply -f k8s/postgres-statefulset.yaml
-          
 
-      - name: Wait for postgres
+      - name: Wait for Postgres
         run: |
-          kubectl rollout status statefulset/postgres -n $K8S_NAMESPACE --timeout=180s
+          kubectl rollout status deployment/postgres -n $K8S_NAMESPACE --timeout=180s
 
       - name: Deploy backend resources
         run: |
