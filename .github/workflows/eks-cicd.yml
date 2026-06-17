@@ -12,7 +12,6 @@ env:
   ECR_REGISTRY: 208851973284.dkr.ecr.ap-south-1.amazonaws.com
   ECR_REPOSITORY: b17
   IMAGE_TAG: ${{ github.sha }}
-  FRONTEND_IMAGE: 208851973284.dkr.ecr.ap-south-1.amazonaws.com/b17:frontend-${{ github.sha }}
   BACKEND_IMAGE: 208851973284.dkr.ecr.ap-south-1.amazonaws.com/b17:backend-${{ github.sha }}
   K8S_NAMESPACE: talent-app
 
@@ -38,17 +37,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build frontend image
-        run: |
-          docker build -t $FRONTEND_IMAGE ./talent-directory
-
       - name: Build backend image
         run: |
           docker build -t $BACKEND_IMAGE ./backend
-
-      - name: Push frontend image
-        run: |
-          docker push $FRONTEND_IMAGE
 
       - name: Push backend image
         run: |
@@ -60,7 +51,6 @@ jobs:
 
       - name: Replace image placeholders in k8s manifests
         run: |
-          sed -i "s|IMAGE_FRONTEND|$FRONTEND_IMAGE|g" k8s/frontend-deployment.yaml
           sed -i "s|IMAGE_BACKEND|$BACKEND_IMAGE|g" k8s/backend-deployment.yaml
 
       - name: Deploy namespace
@@ -69,15 +59,12 @@ jobs:
 
       - name: Deploy config and secret
         run: |
-          kubectl apply -f k8s/frontend-configmap.yaml
           kubectl apply -f k8s/backend-secret.yaml
 
-      - name: Deploy backend and frontend
+      - name: Deploy backend
         run: |
           kubectl apply -f k8s/backend-deployment.yaml
           kubectl apply -f k8s/backend-service.yaml
-          kubectl apply -f k8s/frontend-deployment.yaml
-          kubectl apply -f k8s/frontend-service.yaml
 
       - name: Verify deployment
         run: |
