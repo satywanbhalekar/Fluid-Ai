@@ -105,3 +105,5 @@ jobs:
         run: |
           kubectl get all -n $K8S_NAMESPACE
           kubectl get pvc -n $K8S_NAMESPACE
+
+          
